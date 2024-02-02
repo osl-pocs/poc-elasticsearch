@@ -39,25 +39,22 @@ RUN apt-get update && \
         vim && \
     rm -rf /var/lib/apt/lists/*
 
-USER rxiv_rest_api
+RUN mamba install -y poetry
 
-WORKDIR /rxiv-rest-api
+RUN mkdir -p /tmp/rxivapp
+COPY pyproject.toml /tmp/rxivapp/
 
-COPY pyproject.toml .
+WORKDIR /tmp/rxivapp/
 
 # Create and copy virtual environment: Poetry is configured not to create a new
 # virtual environment and necessary dependencies are installed without
 # development packages
 
-RUN mamba install -y poetry && \
-    poetry config virtualenvs.create false && \
-    poetry install --no-dev --no-interaction --no-ansi
+RUN poetry config virtualenvs.create false && \
+    poetry install --only main --no-interaction --no-ansi --no-root
 
+COPY . /app
 
-COPY . /rxiv-rest-api/
+WORKDIR /app/src/rxiv_rest_api
 
-COPY . .
-
-COPY compose.yaml .
-
-CMD ["python", "rxiv_rest_api.py"]
+CMD ["/app/containers/entrypoint.sh", "python", "app.py"]

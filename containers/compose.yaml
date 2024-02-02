@@ -1,17 +1,15 @@
-version: '3.9'
-
+version: '3'
 services:
-  web:
-    build: .
+  es:
+    hostname: es
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    environment:
+      - discovery.type=single-node
+  app:
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile
     ports:
       - "5000:5000"
-    volumes:
-      - .:/code
-
-    postgres-db:
-    image: postgres
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - ./tmp/db:/var/lib/postgresql/data
+    depends_on:
+      - es
