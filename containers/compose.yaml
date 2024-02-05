@@ -1,10 +1,26 @@
-version: '3'
+version: "3"
 services:
   es:
     hostname: es
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: es
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0 #${STACK_VERSION}
+    # env_file:
+    #   - ../.env
     environment:
       - discovery.type=single-node
+      - node.name=es
+      - ELASTIC_PASSWORD=worksfine #${ELASTIC_PASSWORD}
+      - bootstrap.memory_lock=true
+    ports:
+      - 9200:9200
+    expose:
+      - 9200 #${ES_PORT}
+    networks:
+      - rxiv-rest
+    healthcheck:
+      # curl -u elastic:worksfine -k https://es:9200
+      test: ["CMD-SHELL", "curl -s -k https://localhost:9200 | grep -q 'missing authentication credentials'"]
+
   app:
     build:
       context: ..
@@ -13,3 +29,9 @@ services:
       - "5000:5000"
     depends_on:
       - es
+    networks:
+      - rxiv-rest
+
+networks:
+  rxiv-rest:
+    driver: bridge
