@@ -5,6 +5,7 @@ services:
     hostname: es
     container_name: es
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    user: "1000:1000"  # Set the UID:GID to run the container
     environment:
       - discovery.type=single-node
       - node.name=es
@@ -15,8 +16,6 @@ services:
       # - xpack.security.http.ssl.key=/usr/share/elasticsearch/config/certs/es/elastic-certificates.key
       # - xpack.security.http.ssl.certificate=/usr/share/elasticsearch/config/certs/es/elastic-certificates.crt
       # - xpack.security.http.ssl.certificate_authorities=/usr/share/elasticsearch/config/certs/ca/ca.crt
-    volumes:
-      - ./esconfig/certs/ca:/usr/share/elasticsearch/config/certs/
     ports:
       - 9200:9200
     expose:
