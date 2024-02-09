@@ -45,6 +45,7 @@ mkdocstrings = ">=0.21.2"
 mkdocstrings-python = ">=1.1.2"
 makim =">=1.12.0"
 containers-sugar = "1.10.0"
+jupyterlab = "^4.0.12"
 
 [tool.pytest.ini_options]
 testpaths = [
